@@ -1,0 +1,5 @@
+{
+  "name": "Ethical AI Arena",
+  "description": "A React application that compares and judges ethical reasoning from simulated AI models (OpenAI, Gemini, Claude) using the Gemini API.",
+  "requestFramePermissions": []
+}
