@@ -24,9 +24,9 @@ const PRICING: any = {
 };
 
 export async function POST(req: NextRequest) {
-  if (await limiter.removeTokens(1) < 0) {
-    return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 });
-  }
+  // if (await limiter.removeTokens(1) < 0) {
+  //   return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 });
+  // }
   try {
     const body = await req.json();
     const { modelAlias, prompt, isJudge, jsonMode } = body;
@@ -36,6 +36,12 @@ export async function POST(req: NextRequest) {
     let modelName = "";
 
     const start = performance.now();
+
+    // DEBUG: Check if keys are loaded (Safe logging)
+    console.log(`[DEBUG] Model: ${modelAlias}`);
+    if (modelAlias === 'OpenAI') console.log(`[DEBUG] OpenAI Key Length: ${process.env.OPENAI_API_KEY?.length || 0}`);
+    if (modelAlias === 'Gemini') console.log(`[DEBUG] Gemini Key Length: ${(process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY)?.length || 0}`);
+    if (modelAlias === 'Claude') console.log(`[DEBUG] Claude Key Length: ${process.env.ANTHROPIC_API_KEY?.length || 0}`);
 
     // --- OPENAI LOGIC ---
     if (modelAlias === 'OpenAI') {
@@ -71,7 +77,7 @@ export async function POST(req: NextRequest) {
     // --- GEMINI LOGIC ---
     // --- GEMINI LOGIC ---
     else if (modelAlias === 'Gemini') {
-      modelName = "gemini-1.5-flash";
+      modelName = "gemini-2.0-flash";
       const model = googleAI.getGenerativeModel({
         model: modelName,
         systemInstruction: isJudge ? "You are a strict judge. Output valid JSON only." : SYSTEM_PROMPTS.Gemini,

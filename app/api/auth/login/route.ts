@@ -6,9 +6,10 @@ import { RateLimiter } from 'limiter';
 const limiter = new RateLimiter({ tokensPerInterval: 5, interval: "minute" });
 
 export async function POST(req: NextRequest) {
-    if (await limiter.removeTokens(1) < 0) {
-        return NextResponse.json({ error: 'Too many login attempts. Please try again later.' }, { status: 429 });
-    }
+    // Rate limit removed by user request
+    // if (await limiter.removeTokens(1) < 0) {
+    //     return NextResponse.json({ error: 'Too many login attempts. Please try again later.' }, { status: 429 });
+    // }
     try {
         const { username, password } = await req.json();
 

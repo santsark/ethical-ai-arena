@@ -12,7 +12,7 @@ import { Spinner } from '../components/Spinner';
 
 // Initial Question
 const DEFAULT_QUESTION = "What is 2 + 2?";
-const MAX_USAGE_LIMIT = 5;
+const MAX_USAGE_LIMIT = 1000;
 
 type AuthMode = 'USER' | 'ADMIN' | null;
 
@@ -20,10 +20,10 @@ export default function Home() {
   const [authMode, setAuthMode] = useState<AuthMode>(null);
   const [usageCount, setUsageCount] = useState(0);
   const [isClient, setIsClient] = useState(false);
-  
+
   const [question, setQuestion] = useState(DEFAULT_QUESTION);
   const [appState, setAppState] = useState<AppState>(AppState.IDLE);
-  
+
   const [responses, setResponses] = useState<ModelResponse[]>([]);
   const [judgeResults, setJudgeResults] = useState<JudgeResult[]>([]);
 
@@ -64,16 +64,16 @@ export default function Home() {
 
     // 2. Generate Responses (Parallel)
     const models: Array<'OpenAI' | 'Gemini' | 'Claude'> = ['OpenAI', 'Gemini', 'Claude'];
-    
+
     try {
       const responsePromises = models.map(model => generateEthicalResponse(model, question));
       const results = await Promise.all(responsePromises);
       currentResponses = results;
       setResponses(results);
-      
+
       // 3. Move to Judging
       setAppState(AppState.JUDGING);
-      
+
       // 4. Run Judges (Each model judges the set)
       const judgePromises = models.map(async (judgeName) => {
         return await judgeResponses(judgeName, question, results);
@@ -122,17 +122,17 @@ export default function Home() {
             <h1 className="text-xl font-bold tracking-tight text-slate-900">Ethical AI Arena</h1>
           </div>
           <div className="flex items-center gap-6">
-             <div className="text-right hidden sm:block">
-               <p className="text-xs text-slate-500 uppercase tracking-wide">Usage Limit</p>
-               <p className={`font-mono font-bold ${limitReached ? 'text-red-600' : 'text-slate-700'}`}>
-                 {usageCount} / {MAX_USAGE_LIMIT}
-               </p>
+            <div className="text-right hidden sm:block">
+              <p className="text-xs text-slate-500 uppercase tracking-wide">Usage Limit</p>
+              <p className={`font-mono font-bold ${limitReached ? 'text-red-600' : 'text-slate-700'}`}>
+                {usageCount} / {MAX_USAGE_LIMIT}
+              </p>
             </div>
             <div className="text-right hidden sm:block">
-               <p className="text-xs text-slate-500 uppercase tracking-wide">Total Cost</p>
-               <p className="font-mono font-bold text-green-600">${totalCost.toFixed(5)}</p>
+              <p className="text-xs text-slate-500 uppercase tracking-wide">Total Cost</p>
+              <p className="font-mono font-bold text-green-600">${totalCost.toFixed(5)}</p>
             </div>
-            <button 
+            <button
               onClick={() => setAuthMode(null)}
               className="text-xs text-slate-400 hover:text-slate-600 border border-slate-200 px-3 py-1 rounded"
             >
@@ -143,20 +143,20 @@ export default function Home() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
-        
+
         {/* Input Section */}
         <section className="bg-white rounded-2xl shadow-sm border border-slate-200 p-1 relative overflow-hidden">
           {limitReached && (
-             <div className="absolute inset-0 bg-slate-50/90 z-20 flex flex-col items-center justify-center text-center p-8 backdrop-blur-sm">
-                <div className="bg-white p-6 rounded-2xl shadow-xl max-w-md border border-red-100">
-                  <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4 text-red-600">
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-                  </div>
-                  <h3 className="text-xl font-bold text-slate-900 mb-2">Usage Limit Reached</h3>
-                  <p className="text-slate-600 mb-4">You have reached the maximum of {MAX_USAGE_LIMIT} analysis runs for this session.</p>
-                  <p className="text-xs text-slate-400">Please contact administrator for extended access.</p>
+            <div className="absolute inset-0 bg-slate-50/90 z-20 flex flex-col items-center justify-center text-center p-8 backdrop-blur-sm">
+              <div className="bg-white p-6 rounded-2xl shadow-xl max-w-md border border-red-100">
+                <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4 text-red-600">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
                 </div>
-             </div>
+                <h3 className="text-xl font-bold text-slate-900 mb-2">Usage Limit Reached</h3>
+                <p className="text-slate-600 mb-4">You have reached the maximum of {MAX_USAGE_LIMIT} analysis runs for this session.</p>
+                <p className="text-xs text-slate-400">Please contact administrator for extended access.</p>
+              </div>
+            </div>
           )}
 
           <div className="p-6">
@@ -174,7 +174,7 @@ export default function Home() {
             />
             <div className="mt-4 flex justify-between items-center">
               <span className="text-xs text-slate-400 italic">
-                 Results are automatically captured for quality assurance.
+                Results are automatically captured for quality assurance.
               </span>
               <button
                 onClick={handleRunComparison}
@@ -205,7 +205,7 @@ export default function Home() {
                 </span>
               )}
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {responses.map((resp) => (
                 <ResponseCard key={resp.id} response={resp} />
@@ -217,7 +217,7 @@ export default function Home() {
         {/* Judging Results */}
         {appState === AppState.COMPLETE && judgeResults.length > 0 && (
           <section className="animate-fade-in-up delay-100">
-             <div className="mb-6">
+            <div className="mb-6">
               <h2 className="text-2xl font-bold text-slate-900">Judges' Verdicts</h2>
               <p className="text-slate-500 mt-1">Each model independently evaluated and ranked all responses.</p>
             </div>

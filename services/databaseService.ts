@@ -27,7 +27,7 @@ export const logExperimentData = async (
   };
 
   try {
-    const res = await fetch('/api/logs', {
+    const res = await fetch('/api/experiment-logs', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
