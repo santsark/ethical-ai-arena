@@ -49,7 +49,7 @@ export const logExperimentData = async (
  */
 export const getDatabaseLogs = async (): Promise<{ success: boolean; data?: LogEntry[]; error?: string }> => {
   try {
-    const res = await fetch('/api/logs', { cache: 'no-store' }); // Ensure fresh data
+    const res = await fetch('/api/experiment-logs', { cache: 'no-store' }); // Ensure fresh data
     if (!res.ok) {
       const errText = await res.text();
       console.error("API Response not OK:", errText);
