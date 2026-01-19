@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { RateLimiter } from 'limiter';
 
 const limiter = new RateLimiter({ tokensPerInterval: 10, interval: "minute" });
 
 // Initialize Gemini on the server side
-// FIX: Support GOOGLE_API_KEY to match your .env.local file
-const geminiKey = process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY;
-const googleAI = new GoogleGenAI({ apiKey: geminiKey });
+const geminiKey = process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY || "";
+const googleAI = new GoogleGenerativeAI(geminiKey);
 
 const SYSTEM_PROMPTS = {
   OpenAI: "Answer the following question creatively",
@@ -70,21 +69,26 @@ export async function POST(req: NextRequest) {
     }
 
     // --- GEMINI LOGIC ---
+    // --- GEMINI LOGIC ---
     else if (modelAlias === 'Gemini') {
       modelName = "gemini-1.5-flash";
-      const config: any = {
-        systemInstruction: isJudge ? "You are a strict judge. Output valid JSON only." : SYSTEM_PROMPTS.Gemini,
-        temperature: 0.7,
-      };
-      if (jsonMode) config.responseMimeType = "application/json";
-
-      const response = await googleAI.models.generateContent({
+      const model = googleAI.getGenerativeModel({
         model: modelName,
-        contents: prompt,
-        config: config,
+        systemInstruction: isJudge ? "You are a strict judge. Output valid JSON only." : SYSTEM_PROMPTS.Gemini,
       });
 
-      text = response.text || "";
+      const generationConfig: any = {
+        temperature: 0.7,
+      };
+      if (jsonMode) generationConfig.responseMimeType = "application/json";
+
+      const result = await model.generateContent({
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        generationConfig,
+      });
+      const response = await result.response;
+
+      text = response.text() || "";
       usage.input = response.usageMetadata?.promptTokenCount || 0;
       usage.output = response.usageMetadata?.candidatesTokenCount || 0;
     }
