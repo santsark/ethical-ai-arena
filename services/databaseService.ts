@@ -13,14 +13,14 @@ export const logExperimentData = async (
     sessionId: crypto.randomUUID(),
     question,
     responses: responses.map(r => ({
-        model: r.modelName,
-        content: r.content,
-        metrics: { time: r.timeTaken, tokens: r.tokensUsed, cost: r.cost }
+      model: r.modelName,
+      content: r.content,
+      metrics: { time: r.timeTaken, tokens: r.tokensUsed, cost: r.cost }
     })),
     judgments: judgments.map(j => ({
-        judge: j.judgeName,
-        rankings: j.parsedOutput?.rankings,
-        raw: j.rawOutput
+      judge: j.judgeName,
+      rankings: j.parsedOutput?.rankings,
+      raw: j.rawOutput
     })),
     status: error ? 'ERROR' : 'SUCCESS',
     errorMessage: error || null
@@ -47,18 +47,19 @@ export const logExperimentData = async (
  * Retrieves all logs for the Admin Dashboard from the API.
  * Returns null if connection fails.
  */
-export const getDatabaseLogs = async (): Promise<LogEntry[] | null> => {
+export const getDatabaseLogs = async (): Promise<{ success: boolean; data?: LogEntry[]; error?: string }> => {
   try {
     const res = await fetch('/api/logs', { cache: 'no-store' }); // Ensure fresh data
     if (!res.ok) {
-      console.error("API Response not OK:", await res.text());
-      return null;
+      const errText = await res.text();
+      console.error("API Response not OK:", errText);
+      return { success: false, error: `API Error ${res.status}: ${errText}` };
     }
     const data = await res.json();
-    return data;
-  } catch (e) {
+    return { success: true, data };
+  } catch (e: any) {
     console.error("Failed to read DB", e);
-    return null;
+    return { success: false, error: e.message || "Network error fetching logs" };
   }
 };
 

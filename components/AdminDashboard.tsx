@@ -19,7 +19,7 @@ export const AdminDashboard: React.FC<Props> = ({ onLogout }) => {
       setLoading(true);
       setConnectionError(false);
       const data = await getDatabaseLogs();
-      
+
       if (data === null) {
         setConnectionError(true);
         setLogs([]);
@@ -43,7 +43,7 @@ export const AdminDashboard: React.FC<Props> = ({ onLogout }) => {
 
     logs.forEach(log => {
       uniqueSessions.add(log.sessionId);
-      
+
       // Response Metrics
       log.responses.forEach(r => {
         totalCost += r.metrics.cost;
@@ -97,11 +97,11 @@ export const AdminDashboard: React.FC<Props> = ({ onLogout }) => {
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-3">
               <div className="bg-red-500 p-1.5 rounded-lg">
-                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
               </div>
               <h1 className="text-xl font-bold tracking-tight">Admin Console</h1>
             </div>
-            
+
             {/* Connection Status Badge */}
             {!loading && (
               <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border ${connectionError ? 'bg-red-900/50 border-red-700 text-red-200' : 'bg-green-900/50 border-green-700 text-green-200'}`}>
@@ -117,7 +117,7 @@ export const AdminDashboard: React.FC<Props> = ({ onLogout }) => {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        
+
         {loading ? (
           <div className="flex justify-center items-center h-64">
             <div className="flex flex-col items-center gap-4">
@@ -130,8 +130,8 @@ export const AdminDashboard: React.FC<Props> = ({ onLogout }) => {
             <h3 className="text-lg font-bold text-red-800 mb-2">Database Connection Error</h3>
             <p className="text-red-600 mb-4">Could not connect to the PostgreSQL database.</p>
             <div className="text-left bg-white p-4 rounded border border-red-100 font-mono text-xs text-slate-600 overflow-auto max-w-2xl mx-auto">
-              1. Check if the <strong>DATABASE_URL</strong> in .env.local is correct.<br/>
-              2. Ensure your IP is allowed in Neon/Supabase settings (if applicable).<br/>
+              1. Check if the <strong>DATABASE_URL</strong> in .env.local is correct.<br />
+              2. Ensure your IP is allowed in Neon/Supabase settings (if applicable).<br />
               3. Check server console logs for detailed error messages.
             </div>
           </div>
