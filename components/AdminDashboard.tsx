@@ -17,14 +17,14 @@ export const AdminDashboard: React.FC<Props> = ({ onLogout }) => {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      setConnectionError(false);
-      const data = await getDatabaseLogs();
+      setConnectionError(null);
+      const result = await getDatabaseLogs();
 
-      if (data === null) {
-        setConnectionError(true);
+      if (!result.success) {
+        setConnectionError(result.error || "Unknown error");
         setLogs([]);
       } else {
-        setLogs(data);
+        setLogs(result.data || []);
       }
       setLoading(false);
     };
@@ -128,7 +128,7 @@ export const AdminDashboard: React.FC<Props> = ({ onLogout }) => {
         ) : connectionError ? (
           <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
             <h3 className="text-lg font-bold text-red-800 mb-2">Database Connection Error</h3>
-            <p className="text-red-600 mb-4">Could not connect to the PostgreSQL database.</p>
+            <p className="text-red-600 mb-4 font-mono text-sm">{connectionError}</p>
             <div className="text-left bg-white p-4 rounded border border-red-100 font-mono text-xs text-slate-600 overflow-auto max-w-2xl mx-auto">
               1. Check if the <strong>DATABASE_URL</strong> in .env.local is correct.<br />
               2. Ensure your IP is allowed in Neon/Supabase settings (if applicable).<br />
