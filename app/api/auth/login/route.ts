@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { RateLimiter } from 'limiter';
 
 const limiter = new RateLimiter({ tokensPerInterval: 5, interval: "minute" });
