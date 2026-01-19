@@ -10,7 +10,7 @@ interface Props {
 export const AdminDashboard: React.FC<Props> = ({ onLogout }) => {
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [loading, setLoading] = useState(true);
-  const [connectionError, setConnectionError] = useState(false);
+  const [connectionError, setConnectionError] = useState<string | null>(null);
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
 
   // Fetch data on mount
